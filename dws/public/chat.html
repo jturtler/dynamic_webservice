@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT Frontend App</title>
+    
+    <script src="jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready( () => 
+        {
+            var divChatTag = $( '#chat' );
+            var userInputTag = $( '#userInput' );
+            var btnPromptSendTag = $( '.btnPromptSend' );
+            var pinTag = $( '#pin' );
+
+            btnPromptSendTag.click( function( e ) 
+            {
+                var inputMsg = userInputTag.val();
+
+                if ( inputMsg )
+                {
+                    $.ajax({
+                        type: 'post',
+                        url: '/apiChat/chatAI',    
+                        data: JSON.stringify( { inputMsg: inputMsg, pin: pinTag.val() } ),
+                        contentType: 'application/json', 
+                        success: function (returnDataJson) 
+                        {
+                            console.log(returnDataJson);
+
+                            divChatTag.append( `<p>User: ${inputMsg} </p>` );
+                            divChatTag.append( `<p>ChatGPT: ${ returnDataJson.returnMsg } </p>` );
+
+                            userInputTag.val( '' );  // Clear out the input
+                        },  
+                        error: function () {
+                            alert('We are sorry but our servers are having an issue right now');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+
+
+</head>
+<body>
+    <h1>ChatGPT Frontend App</h1>
+    <span>PIN:</span>  <input type="password" id="pin" style="width: 50px;"><br><br>
+
+    <div id="chat"></div>
+    <span>Prompt:</span> <input type="text" id="userInput"> <button class="btnPromptSend">Send</button>
+
+    <div style="margin-top: 40px;">
+        <span>Prompt Saving feature - if the prompt was a good example.  (store both prompt and answer.. with easy button..)  In database?</span>
+    </div>
+</body>
+</html>
